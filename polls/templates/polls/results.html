@@ -1,0 +1,21 @@
+<!-- CONTEXT: -->
+<!-- The Question Object -->
+<!-- @question_text: string -->
+<!-- @id: integer -->
+
+<h1>
+  {{ question.question_text }} Results:
+</h1>
+
+<ul>
+  {% for choice in question.choice_set.all %}
+    <li>
+      {{choice.choice_text}}: 
+      <strong>
+          {{choice.votes}}
+        </strong>
+    </li>
+  {% endfor %}
+</ul>
+
+<a href="{% url 'polls:detail' question.id %}">Vote again?</a>
