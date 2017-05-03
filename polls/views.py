@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from .models import Question, Choice
-from django.http import HttpResponse, HttpResponseRedirect
-from django.template import loader
+from django.http import HttpResponseRedirect
 from django.urls import reverse
+from django.views import generic
 
 # some django shortcuts ================================
 from django.shortcuts import render, get_object_or_404
 # render also returns an HttpResponse object
 # get_object_or_404() = a shortcut for fetch + error handling (also has for list / object)
 
+from .models import Question, Choice
 
 # ========== Think of these as Express Middleware Functions ============
 # ========== ie (req, res) => { } =================
@@ -52,6 +52,28 @@ def results(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
     return render(request, 'polls/results.html', {'question': question})
 
+
+
+# =============== Amending the 'middleware' methods to classes ==================
+# ================= uses 'generic' views from django ============================
+# ======= generic.ListView + generic.DetailView are the imported templates ======
+
+class IndexView(generic.ListView):
+    template_name = 'polls/index.html'
+    context_object_name = 'latest_question_list' # need to override default context name
+    def get_queryset(self):
+      return Question.objects.order_by('-pub_date')[:5]
+
+
+# ===== generic.DetailView automatically provides 'question' context variable
+class DetailView(generic.DetailView):
+    model = Question # generic view needs to know this
+    template_name = 'polls/detail.html' # provides specific name to template
+
+
+class ResultsView(generic.DetailView):
+    model = Question # generic view needs to know this
+    template_name = 'polls/results.html' # provides specific name to template
 
 
 #  VOTE controller - post request #
