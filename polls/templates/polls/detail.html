@@ -1,9 +1,27 @@
+<!-- CONTEXT: -->
+<!-- The Question Object -->
+<!-- @question_text: string -->
+<!-- @id: integer -->
+
 <h1>
   {{ question.question_text }}</h1>
-<ul>
+
+<!-- If there's an error message passed in, display it -->
+{% if error_message %}
+<p>
+  <strong>
+    {{ error_message }}</strong></p>
+{% endif %}
+
+<form action="{% url 'polls:vote' question.id %}" method="post">
+  <!--CORS token-->
+  {% csrf_token %}
+
+  <!-- forloop.counter = i in a JS for loop -->
+  <!-- Remember that you're looping through CHOICES for a given question -->
   {% for choice in question.choice_set.all %}
-    <li>
-      {{ choice.choice_text }}
-    </li>
+    <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}" />
+    <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br />
   {% endfor %}
-</ul>
+    <input type="submit" value="Vote">
+</form>
