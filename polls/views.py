@@ -4,12 +4,13 @@ from .models import Question
 from django.http import HttpResponse, Http404
 from django.template import loader
 
-from django.shortcuts import render  # render also returns an HttpResponse object
+# some django shortcuts ================================
+from django.shortcuts import render, get_object_or_404
+# render also returns an HttpResponse object
+# get_object_or_404() = a shortcut for fetch + error handling (also has for list / object)
 
-# Create your views here.
 
-
-# INDEX CONTROLLER #
+# INDEX controller #
 def index(request):
     latest_question_list = Question.objects.order_by('-pub_date')[:5]
     # template = loader.get_template('polls/index.html')
@@ -24,16 +25,21 @@ def index(request):
     # This is a condensed version of the commented code above
 
 
-# DETAIL CONTROLLER #
+# DETAIL controller #
 def detail(request, question_id):
+    # Python's version of ${variable} => %s + % + value
     # response = "You're looking at the question %s."
     # return HttpResponse(response % question_id)
-    try:
-        question = Question.objects.get(pk=question_id)
-    except Question.DoesNotExist:
-        raise Http404('Question does not exist')
+
+    # a Try / Catch for Errors
+    # try:
+    #     question = Question.objects.get(pk=question_id)
+    # except Question.DoesNotExist:
+    #     raise Http404('Question does not exist')
+
+    # Using the error fetch shortcut
+    question = get_object_or_404(Question, pk=question_id)
     return render(request, 'polls/detail.html', {'question': question})
-    # Adding some error handling
 
 
 
